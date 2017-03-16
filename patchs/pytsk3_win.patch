@@ -1,0 +1,241 @@
+diff --git a/sleuthkit/tsk/auto/auto_db.cpp b/sleuthkit/tsk/auto/auto_db.cpp
+index 23ee066..e6443be 100644
+--- a/sleuthkit/tsk/auto/auto_db.cpp
++++ b/sleuthkit/tsk/auto/auto_db.cpp
+@@ -850,7 +850,7 @@ TSK_RETVAL_ENUM TskAutoDb::addFsInfoUnalloc(const TSK_DB_FS_INFO & dbFsInfo) {
+     //open the fs we have from database
+     TSK_FS_INFO * fsInfo = tsk_fs_open_img(m_img_info, dbFsInfo.imgOffset, dbFsInfo.fType);
+     if (fsInfo == NULL) {
+-        tsk_error_set_errstr2("TskAutoDb::addFsInfoUnalloc: error opening fs at offset %"PRIuOFF, dbFsInfo.imgOffset);
++        tsk_error_set_errstr2("TskAutoDb::addFsInfoUnalloc: error opening fs at offset %" PRIuOFF, dbFsInfo.imgOffset);
+         registerError();
+         return TSK_ERR;
+     }
+
+warning: LF will be replaced by CRLF in auto/auto_db.cpp.
+The file will have its original line endings in your working directory.
+diff --git a/sleuthkit/tsk/auto/db_sqlite.cpp b/sleuthkit/tsk/auto/db_sqlite.cpp
+index 19493cd..3777ec7 100644
+--- a/sleuthkit/tsk/auto/db_sqlite.cpp
++++ b/sleuthkit/tsk/auto/db_sqlite.cpp
+@@ -512,7 +512,7 @@ int TskDbSqlite::addImageInfo(int type, TSK_OFF_T ssize, int64_t & objId, const
+
+     // Add the data source to the tsk_image_info table.
+     char *sql;
+-    sql = sqlite3_mprintf("INSERT INTO tsk_image_info (obj_id, type, ssize, tzone, size, md5) VALUES (%lld, %d, %d, '%q', %"PRIuOFF", '%q');",
++    sql = sqlite3_mprintf("INSERT INTO tsk_image_info (obj_id, type, ssize, tzone, size, md5) VALUES (%lld, %d, %d, '%q', %" PRIuOFF", '%q');",
+         objId, type, ssize, timezone.c_str(), size, md5.c_str());
+     int ret = attempt_exec(sql, "Error adding data to tsk_image_info table: %s\n");
+     sqlite3_free(sql);
+@@ -790,7 +790,7 @@ int64_t TskDbSqlite::findParObjId(const TSK_FS_FILE * fs_file, const char *paren
+         }
+     }
+
+-    // fprintf(stderr, "Miss: %s (%"PRIu64 " - %" PRIu64 ")\n", fs_file->name->name, fs_file->name->meta_addr,
++    // fprintf(stderr, "Miss: %s (%" PRIu64 " - %" PRIu64 ")\n", fs_file->name->name, fs_file->name->meta_addr,
+     //                fs_file->name->par_addr);
+     
+     // Need to break up 'path' in to the parent folder to match in 'parent_path' and the folder
+@@ -1106,7 +1106,7 @@ TSK_RETVAL_ENUM
+     char *fsObjIdStrPtr = NULL;
+     char fsObjIdStr[32];
+     if (fsObjId != 0) {
+-        snprintf(fsObjIdStr, 32, "%"PRIu64, fsObjId);
++        snprintf(fsObjIdStr, 32, "%" PRIu64, fsObjId);
+         fsObjIdStrPtr = fsObjIdStr;
+     }
+
+@@ -1490,7 +1490,7 @@ TSK_RETVAL_ENUM TskDbSqlite::getFsInfos(int64_t imgId, vector<TSK_DB_FS_INFO> &
+         if (getParentImageId(fsObjId, curImgId) == TSK_ERR) {
+             tsk_error_reset();
+             tsk_error_set_errno(TSK_ERR_AUTO_DB);
+-            tsk_error_set_errstr("Error finding parent for: %"PRIu64, fsObjId);
++            tsk_error_set_errstr("Error finding parent for: %" PRIu64, fsObjId);
+             return TSK_ERR;
+         }
+
+@@ -1543,7 +1543,7 @@ TSK_RETVAL_ENUM TskDbSqlite::getVsInfos(int64_t imgId, vector<TSK_DB_VS_INFO> &
+         if (getParentImageId(vsObjId, curImgId) == TSK_ERR) {
+             tsk_error_reset();
+             tsk_error_set_errno(TSK_ERR_AUTO_DB);
+-            tsk_error_set_errstr("Error finding parent for: %"PRIu64, vsObjId);
++            tsk_error_set_errstr("Error finding parent for: %" PRIu64, vsObjId);
+             return TSK_ERR;
+         }
+
+@@ -1593,7 +1593,7 @@ TSK_RETVAL_ENUM TskDbSqlite::getVsPartInfos(int64_t imgId, vector<TSK_DB_VS_PART
+         if (getParentImageId(vsPartObjId, curImgId) == TSK_ERR) {
+             tsk_error_reset();
+             tsk_error_set_errno(TSK_ERR_AUTO_DB);
+-            tsk_error_set_errstr("Error finding parent for: %"PRIu64, vsPartObjId);
++            tsk_error_set_errstr("Error finding parent for: %" PRIu64, vsPartObjId);
+             return TSK_ERR;
+         }
+
+
+warning: LF will be replaced by CRLF in auto/db_sqlite.cpp.
+The file will have its original line endings in your working directory.
+diff --git a/sleuthkit/tsk/fs/tsk_fs_i.h b/sleuthkit/tsk/fs/tsk_fs_i.h
+index 58df7e9..77b8b5c 100644
+--- a/sleuthkit/tsk/fs/tsk_fs_i.h
++++ b/sleuthkit/tsk/fs/tsk_fs_i.h
+@@ -40,6 +40,7 @@
+ #include "tsk_fs.h"
+
+ #include <time.h>
++#define tzname _tzname
+ #include <locale.h>
+
+ #ifdef __cplusplus
+
+warning: LF will be replaced by CRLF in fs/tsk_fs_i.h.
+The file will have its original line endings in your working directory.
+diff --git a/sleuthkit/tsk/hashdb/binsrch_index.cpp b/sleuthkit/tsk/hashdb/binsrch_index.cpp
+index 20b2322..081b96c 100644
+--- a/sleuthkit/tsk/hashdb/binsrch_index.cpp
++++ b/sleuthkit/tsk/hashdb/binsrch_index.cpp
+@@ -209,7 +209,7 @@ static uint8_t
+                 tsk_error_reset();
+                 tsk_error_set_errno(TSK_ERR_HDB_OPEN);
+                 tsk_error_set_errstr(
+-                    "%s: error opening index of index: %"PRIttocTSK" - %d",
++                    "%s: error opening index of index: %" PRIttocTSK " - %d",
+                     func_name, hdb_binsrch_info->idx_idx_fname, (int)GetLastError());
+                 return 1;
+         }
+@@ -219,7 +219,7 @@ static uint8_t
+             tsk_error_reset();
+             tsk_error_set_errno(TSK_ERR_HDB_OPEN);
+             tsk_error_set_errstr(
+-                "%s: error converting file handle from Windows to C for: %"PRIttocTSK, 
++                "%s: error converting file handle from Windows to C for: %" PRIttocTSK,
+                 func_name, hdb_binsrch_info->idx_idx_fname);
+             return 1;
+         }
+@@ -230,7 +230,7 @@ static uint8_t
+             tsk_error_reset();
+             tsk_error_set_errno(TSK_ERR_HDB_OPEN);
+             tsk_error_set_errstr(
+-                "%s: error getting size of index of index file: %"PRIttocTSK" - %d",
++                "%s: error getting size of index of index file: %" PRIttocTSK " - %d",
+                 func_name, hdb_binsrch_info->idx_idx_fname, (int)GetLastError());
+             return 1;
+         }
+@@ -249,7 +249,7 @@ static uint8_t
+             tsk_error_reset();
+             tsk_error_set_errno(TSK_ERR_HDB_OPEN);
+             tsk_error_set_errstr(
+-                "%s: error opening index of index: %"PRIttocTSK,
++                "%s: error opening index of index: %" PRIttocTSK,
+                 func_name, hdb_binsrch_info->idx_idx_fname);
+             return 1;
+         }
+@@ -325,7 +325,7 @@ static uint8_t
+             tsk_error_reset();
+             tsk_error_set_errno(TSK_ERR_HDB_MISSING);
+             tsk_error_set_errstr(
+-                "hdb_binsrch_open_idx_file: Error finding index file: %"PRIttocTSK,
++                "hdb_binsrch_open_idx_file: Error finding index file: %" PRIttocTSK,
+                 hdb_binsrch_info->idx_fname);
+             return 1;
+         }
+@@ -337,7 +337,7 @@ static uint8_t
+                 tsk_error_reset();
+                 tsk_error_set_errno(TSK_ERR_HDB_OPEN);
+                 tsk_error_set_errstr(
+-                    "hdb_binsrch_open_idx: Error opening index file: %"PRIttocTSK,
++                    "hdb_binsrch_open_idx: Error opening index file: %" PRIttocTSK,
+                     hdb_binsrch_info->idx_fname);
+                 return 1;
+         }
+@@ -358,7 +358,7 @@ static uint8_t
+             tsk_error_reset();
+             tsk_error_set_errno(TSK_ERR_HDB_OPEN);
+             tsk_error_set_errstr(
+-                "hdb_binsrch_open_idx_file: Error getting size of index file: %"PRIttocTSK" - %d",
++                "hdb_binsrch_open_idx_file: Error getting size of index file: %" PRIttocTSK " - %d",
+                 hdb_binsrch_info->idx_fname, (int)GetLastError());
+             return 1;
+         }
+@@ -684,7 +684,7 @@ uint8_t
+                 tsk_error_reset();
+                 tsk_error_set_errno(TSK_ERR_HDB_CREATE);
+                 tsk_error_set_errstr(
+-                    "%s: %"PRIttocTSK" GetFileSize: %d",
++                    "%s: %" PRIttocTSK " GetFileSize: %d",
+                     func_name, hdb_binsrch_info->uns_fname, (int)GetLastError());
+                 return 1;
+         }
+@@ -831,7 +831,7 @@ static uint8_t
+                 tsk_error_reset();
+                 tsk_error_set_errno(TSK_ERR_HDB_CREATE);
+                 tsk_error_set_errstr(
+-                    "%s: error creating index of index file %"PRIttocTSK" - %d)",
++                    "%s: error creating index of index file %" PRIttocTSK " - %d)",
+                     func_name, hdb_binsrch_info->idx_idx_fname, winErrNo);
+                 return 1;
+         }
+@@ -842,7 +842,7 @@ static uint8_t
+             tsk_error_reset();
+             tsk_error_set_errno(TSK_ERR_HDB_OPEN);
+             tsk_error_set_errstr(
+-                "%s: error converting file handle from Windows to C for: %"PRIttocTSK, 
++                "%s: error converting file handle from Windows to C for: %" PRIttocTSK,
+                 func_name, hdb_binsrch_info->idx_idx_fname);
+             return 1;
+         }
+@@ -852,7 +852,7 @@ static uint8_t
+         tsk_error_reset();
+         tsk_error_set_errno(TSK_ERR_HDB_CREATE);
+         tsk_error_set_errstr(
+-            "%s: error creating index of index file %"PRIttocTSK,
++            "%s: error creating index of index file %" PRIttocTSK,
+             func_name, hdb_binsrch_info->idx_idx_fname);
+         return 1;
+     }
+
+warning: LF will be replaced by CRLF in hashdb/binsrch_index.cpp.
+The file will have its original line endings in your working directory.
+diff --git a/sleuthkit/tsk/hashdb/sqlite_hdb.cpp b/sleuthkit/tsk/hashdb/sqlite_hdb.cpp
+index f4de866..7c3e541 100644
+--- a/sleuthkit/tsk/hashdb/sqlite_hdb.cpp
++++ b/sleuthkit/tsk/hashdb/sqlite_hdb.cpp
+@@ -414,7 +414,7 @@ uint8_t
+     if (TSK_HDB_HTYPE_MD5_LEN != md5_str_len) {
+         tsk_error_reset();
+         tsk_error_set_errno(TSK_ERR_HDB_ARG);
+-        tsk_error_set_errstr("sqlite_hdb_add_entry: md5 length incorrect (=%"PRIuSIZE")", md5_str_len);
++        tsk_error_set_errstr("sqlite_hdb_add_entry: md5 length incorrect (=%" PRIuSIZE ")", md5_str_len);
+         return 1;
+     }
+
+@@ -491,7 +491,7 @@ int8_t
+     if (TSK_HDB_HTYPE_MD5_LEN != len) {
+         tsk_error_reset();
+         tsk_error_set_errno(TSK_ERR_HDB_ARG);
+-        tsk_error_set_errstr("sqlite_hdb_lookup_str: hash length incorrect (=%"PRIuSIZE"), expecting %d", len, TSK_HDB_HTYPE_MD5_LEN);
++        tsk_error_set_errstr("sqlite_hdb_lookup_str: hash length incorrect (=%" PRIuSIZE "), expecting %d", len, TSK_HDB_HTYPE_MD5_LEN);
+         return 1;
+     }
+
+@@ -525,7 +525,7 @@ int8_t
+     if (MD5_BLOB_LEN != len) {
+         tsk_error_reset();
+         tsk_error_set_errno(TSK_ERR_HDB_ARG);
+-        tsk_error_set_errstr("sqlite_hdb_lookup_bin: len=%"PRIu8", expected %"PRIuSIZE, len, MD5_BLOB_LEN);
++        tsk_error_set_errstr("sqlite_hdb_lookup_bin: len=%" PRIu8 ", expected %" PRIuSIZE, len, MD5_BLOB_LEN);
+         return -1;
+     }
+
+@@ -595,7 +595,7 @@ int8_t sqlite_hdb_lookup_verbose_str(TSK_HDB_INFO *hdb_info_base, const char *ha
+     if (TSK_HDB_HTYPE_MD5_LEN != len) {
+         tsk_error_reset();
+         tsk_error_set_errno(TSK_ERR_HDB_ARG);
+-        tsk_error_set_errstr("sqlite_hdb_lookup_verbose_str: hash length incorrect (=%"PRIuSIZE"), expecting %d", len, TSK_HDB_HTYPE_MD5_LEN);
++        tsk_error_set_errstr("sqlite_hdb_lookup_verbose_str: hash length incorrect (=%" PRIuSIZE "), expecting %d", len, TSK_HDB_HTYPE_MD5_LEN);
+         return -1;
+     }
+
+
+warning: LF will be replaced by CRLF in hashdb/sqlite_hdb.cpp.
+The file will have its original line endings in your working directory.

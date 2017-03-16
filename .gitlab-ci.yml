@@ -1,0 +1,115 @@
+.linux_build_template: &linux-build-def
+  artifacts:
+    paths:
+      - dist/*
+    expire_in: 1 week
+  stage: build
+  tags:
+      - linux
+
+stages:
+  - build
+  - deploy
+
+win32:
+  stage: build
+  script:
+    - python build.py win x86
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1 week
+  tags:
+    - windows
+
+win64:
+  stage: build
+  script:
+    - python build.py win x64
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1 week
+  tags:
+    - windows
+
+osx:
+  stage: build
+  script:
+    - python3 build.py osx x64
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1 week
+  tags:
+    - osx
+
+android:
+  stage: build
+  script:
+    - python3 build.py android arm
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1 week
+  tags:
+    - android
+
+x86_centos6:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x86 --distro=centos6
+x86_centos7:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x86 --distro=centos7
+x86_debian7:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x86 --distro=debian7
+x86_debian8:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x86 --distro=debian8
+x86_ubuntu12.04:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x86 --distro=ubuntu12.04
+x86_ubuntu14.04:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x86 --distro=ubuntu14.04
+x86_ubuntu16.04:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x86 --distro=ubuntu16.04
+    - cp -r dist/ubuntu16.04_x86 dist/arch_x86
+x64_centos6:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x64 --distro=centos6
+x64_centos7:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x64 --distro=centos7
+x64_debian7:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x64 --distro=debian7
+x64_debian8:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x64 --distro=debian8
+x64_ubuntu12.04:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x64 --distro=ubuntu12.04
+x64_ubuntu14.04:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x64 --distro=ubuntu14.04
+x64_ubuntu16.04:
+  <<: *linux-build-def
+  script:
+    - python3 build.py linux x64 --distro=ubuntu16.04
+    - cp -r dist/ubuntu16.04_x64 dist/arch_x64
